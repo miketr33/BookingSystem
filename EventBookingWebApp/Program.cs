@@ -7,15 +7,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+var baseUrl = new Uri("https://localhost:7200/");
 builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddHttpClient<ActivityService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7200/");
+    client.BaseAddress = baseUrl;
 });
 builder.Services.AddScoped<IAttendeeService, AttendeeService>();
 builder.Services.AddHttpClient<AttendeeService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7200/");
+    client.BaseAddress = baseUrl;
+});
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddHttpClient<BookingService>(client =>
+{
+    client.BaseAddress = baseUrl;
 });
 
 var app = builder.Build();

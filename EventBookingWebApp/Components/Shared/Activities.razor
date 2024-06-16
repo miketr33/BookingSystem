@@ -108,6 +108,7 @@ else
         </div>
 
         <button type="submit">Save</button>
+        <button type="button" @onclick="CancelUpdate">Cancel</button>
     </EditForm>
 }
 
@@ -166,11 +167,11 @@ else
         </div>
 
         <button type="submit">Save</button>
+        <button type="button" @onclick="CancelCreate">Cancel</button>
     </EditForm>
 }
 
 @code {
-    private const string BaseUrl = "https://localhost:7200/";
     private bool CreateNewActivitySelected = false;
     private bool UpdateActivitySelected = false;
     List<ActivityDto> ActivityDtoCollection = new();
@@ -182,6 +183,16 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadActivities();
+    }
+
+    private void CancelUpdate()
+    {
+        UpdateActivitySelected = false;
+    }
+
+    private void CancelCreate()
+    {
+        CreateNewActivitySelected = false;
     }
 
     private async Task DeleteActivity(int? id)

@@ -1,0 +1,174 @@
+﻿@using EventBookingShared.Dtos
+@using System.ComponentModel.DataAnnotations
+@using EventBookingWebApp.Services
+@inject IBookingService bookingService
+
+<h3>Bookings</h3>
+
+<button @onclick="ShowCreateAttendeeForm">Create Booking</button>
+
+@if (BookingDtoCollection.Count == 0)
+{
+    <p>
+        <em>Loading Bookings...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+                <th>ActivityId</th>
+                <th>AttendeeId</th>
+                <th>Attended</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var booking in BookingDtoCollection)
+        {
+            <tr>
+                <td>@booking.Id</td>
+                <td>@booking.ActivityId</td>
+                <td>@booking.AttendeeId</td>
+                <td>@booking.Attended</td>
+                <td>
+                    <button @onclick="() => EditBooking(booking)">Edit</button>
+                </td>
+                <td>
+                    <button @onclick="() => DeleteBooking(booking.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (UpdateBookingSelected)
+{
+    <EditForm Model="@CurrentBooking" OnValidSubmit="UpdateBooking">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label for="id">Booking Id:</label>
+            <InputNumber id="id" @bind-Value="CurrentBooking.Id" />
+            <ValidationMessage For="@(() => CurrentBooking.Id)" />
+        </div>
+        <div>
+            <label for="activityId">Activity Id:</label>
+            <InputNumber id="activityId" @bind-Value="CurrentBooking.ActivityId" />
+            <ValidationMessage For="@(() => CurrentBooking.ActivityId)" />
+        </div>
+        <div>
+            <label for="attendeeId">Attendee Id:</label>
+            <InputNumber id="attendeeId" @bind-Value="CurrentBooking.AttendeeId" />
+            <ValidationMessage For="@(() => CurrentBooking.AttendeeId)" />
+        </div>
+        <div>
+            <label for="Attended">Attended:</label>
+            <InputCheckbox id="Attended" @bind-Value="CurrentBooking.Attended" />
+            <ValidationMessage For="@(() => CurrentBooking.Attended)" />
+        </div>
+        <button type="submit">Update Booking</button>
+        <button type="button" @onclick="CancelUpdate">Cancel</button>
+    </EditForm>
+}
+
+@if (CreateNewBookingSelected)
+{
+    <EditForm Model="@NewBooking" OnValidSubmit="CreateNewBooking">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label for="activityId">Activity Id:</label>
+            <InputNumber id="activityId" @bind-Value="NewBooking.ActivityId" />
+            <ValidationMessage For="@(() => NewBooking.ActivityId)" />
+        </div>
+        <div>
+            <label for="attendeeId">Attendee Id:</label>
+            <InputNumber id="attendeeId" @bind-Value="NewBooking.AttendeeId" />
+            <ValidationMessage For="@(() => NewBooking.AttendeeId)" />
+        </div>
+        <div>
+            <label for="Attended">Attended:</label>
+            <InputCheckbox id="Attended" @bind-Value="NewBooking.Attended" />
+            <ValidationMessage For="@(() => NewBooking.Attended)" />
+        </div>
+        <button type="submit">Add Booking</button>
+        <button type="button" @onclick="CancelCreate">Cancel</button>
+        </EditForm>
+}
+
+@code {
+    List<BookingDto> BookingDtoCollection = new();
+    private bool CreateNewBookingSelected = false;
+    private bool UpdateBookingSelected = false;
+    BookingDto CurrentBooking;
+    BookingDto NewBooking;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBookings();
+    }
+
+    private void CancelUpdate()
+    {
+        UpdateBookingSelected = false;
+    }
+
+    private void CancelCreate()
+    {
+        CreateNewBookingSelected = false;
+    }
+
+    private async Task LoadBookings()
+    {
+        BookingDtoCollection = await bookingService.GetAllBookings();
+    }
+
+    private async Task EditBooking(BookingDto bookingDto)
+    {
+        UpdateBookingSelected = true;
+        CurrentBooking = new BookingDto
+            {
+                Id = bookingDto.Id,
+                AttendeeId = bookingDto.AttendeeId,
+                ActivityId = bookingDto.ActivityId,
+                Attended = bookingDto.Attended
+            };
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateBooking()
+    {
+        await bookingService.UpdateBooking(CurrentBooking);
+        UpdateBookingSelected = false;
+        await LoadBookings();
+    }
+
+    private async Task DeleteBooking(int id)
+    {
+        await bookingService.DeleteBooking(id);
+        await LoadBookings();
+    }
+
+    private async Task CreateNewBooking()
+    {
+        await bookingService.CreateBooking(NewBooking);
+        CreateNewBookingSelected = false;
+        await LoadBookings();
+    }
+
+    private void ShowCreateAttendeeForm()
+    {
+        CreateNewBookingSelected = true;
+        NewBooking = new BookingDto()
+        {
+            Id = 0,
+            ActivityId = 0,
+            AttendeeId = 0,
+            Attended = false
+        };
+    }
+}
