@@ -1,0 +1,301 @@
+﻿@using EventBookingShared.Dtos
+@using System.ComponentModel.DataAnnotations
+
+<h3>Attendees</h3>
+
+<button @onclick="ShowCreateAttendeeForm">Create Attendee</button>
+@if (AttendeeDtoCollection.Count == 0)
+{
+    <p><em>Loading Attendees...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Add Line 1</th>
+                <th>Add Line 2</th>
+                <th>Add Line 3</th>
+                <th>Postcode</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>DOB</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var attendee in AttendeeDtoCollection)
+            {
+                <tr>
+                    <td>@attendee.Id</td>
+                    <td>@attendee.FirstName</td>
+                    <td>@attendee.LastName</td>
+                    <td>@attendee.AddressLine1</td>
+                    <td>@attendee.AddressLine2</td>
+                    <td>@attendee.AddressLine3</td>
+                    <td>@attendee.Postcode</td>
+                    <td>@attendee.Phone</td>
+                    <td>@attendee.Email</td>
+                    <td>@attendee.DateOfBirth.ToShortDateString()</td>
+                    <td><button @onclick="() => EditAttendee(attendee)">Edit</button></td>
+                    <td><button @onclick="() => DeleteAttendee(attendee.Id)">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (CurrentAttendee != null)
+{
+    <EditForm Model="@CurrentAttendee" OnValidSubmit="UpdateAttendee">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label for="firstName">First Name:</label>
+            <InputText id="firstName" @bind-Value="CurrentAttendee.FirstName" />
+            <ValidationMessage For="@(() => CurrentAttendee.FirstName)" />
+        </div>
+
+        <div>
+            <label for="lastName">Last Name:</label>
+            <InputText id="lastName" @bind-Value="CurrentAttendee.LastName" />
+            <ValidationMessage For="@(() => CurrentAttendee.LastName)" />
+        </div>
+
+        <div>
+            <label for="addressLine1">Address Line 1:</label>
+            <InputText id="addressLine1" @bind-Value="CurrentAttendee.AddressLine1" />
+            <ValidationMessage For="@(() => CurrentAttendee.AddressLine1)" />
+        </div>
+
+        <div>
+            <label for="addressLine2">Address Line 2:</label>
+            <InputText id="addressLine2" @bind-Value="CurrentAttendee.AddressLine2" />
+            <ValidationMessage For="@(() => CurrentAttendee.AddressLine2)" />
+        </div>
+
+        <div>
+            <label for="addressLine3">Address Line 3:</label>
+            <InputText id="addressLine3" @bind-Value="CurrentAttendee.AddressLine3" />
+            <ValidationMessage For="@(() => CurrentAttendee.AddressLine3)" />
+        </div>
+
+        <div>
+            <label for="postcode">Postcode:</label>
+            <InputText id="postcode" @bind-Value="CurrentAttendee.Postcode" />
+            <ValidationMessage For="@(() => CurrentAttendee.Postcode)" />
+        </div>
+
+        <div>
+            <label for="phone">Phone:</label>
+            <InputText id="phone" @bind-Value="CurrentAttendee.Phone" />
+            <ValidationMessage For="@(() => CurrentAttendee.Phone)" />
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <InputText id="email" @bind-Value="CurrentAttendee.Email" />
+            <ValidationMessage For="@(() => CurrentAttendee.Email)" />
+        </div>
+
+        <div>
+            <label for="dateOfBirth">Date of Birth:</label>
+            <InputDate id="dateOfBirth" @bind-Value="CurrentAttendee.DateOfBirth" />
+            <ValidationMessage For="@(() => CurrentAttendee.DateOfBirth)" />
+        </div>
+
+        <button type="submit">Update Attendee</button>
+    </EditForm>
+}
+
+@if (CreateNewActivitySelected)
+{
+    <EditForm Model="@NewAttendee" OnValidSubmit="CreateNewAttendee">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label for="firstName">First Name:</label>
+            <InputText id="firstName" @bind-Value="NewAttendee.FirstName" />
+            <ValidationMessage For="@(() => NewAttendee.FirstName)" />
+        </div>
+
+        <div>
+            <label for="lastName">Last Name:</label>
+            <InputText id="lastName" @bind-Value="NewAttendee.LastName" />
+            <ValidationMessage For="@(() => NewAttendee.LastName)" />
+        </div>
+
+        <div>
+            <label for="addressLine1">Address Line 1:</label>
+            <InputText id="addressLine1" @bind-Value="NewAttendee.AddressLine1" />
+            <ValidationMessage For="@(() => NewAttendee.AddressLine1)" />
+        </div>
+
+        <div>
+            <label for="addressLine2">Address Line 2:</label>
+            <InputText id="addressLine2" @bind-Value="NewAttendee.AddressLine2" />
+            <ValidationMessage For="@(() => NewAttendee.AddressLine2)" />
+        </div>
+
+        <div>
+            <label for="addressLine3">Address Line 3:</label>
+            <InputText id="addressLine3" @bind-Value="NewAttendee.AddressLine3" />
+            <ValidationMessage For="@(() => NewAttendee.AddressLine3)" />
+        </div>
+
+        <div>
+            <label for="postcode">Postcode:</label>
+            <InputText id="postcode" @bind-Value="NewAttendee.Postcode" />
+            <ValidationMessage For="@(() => NewAttendee.Postcode)" />
+        </div>
+
+        <div>
+            <label for="phone">Phone:</label>
+            <InputText id="phone" @bind-Value="NewAttendee.Phone" />
+            <ValidationMessage For="@(() => NewAttendee.Phone)" />
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <InputText id="email" @bind-Value="NewAttendee.Email" />
+            <ValidationMessage For="@(() => NewAttendee.Email)" />
+        </div>
+
+        <div>
+            <label for="dateOfBirth">Date of Birth:</label>
+            <InputDate id="dateOfBirth" @bind-Value="NewAttendee.DateOfBirth" />
+            <ValidationMessage For="@(() => NewAttendee.DateOfBirth)" />
+        </div>
+
+        <button type="submit">Add Attendee</button>
+    </EditForm>
+}
+
+@code {
+    private const string BaseUrl = "https://localhost:7200/";
+    private bool CreateNewActivitySelected = false;
+    List<AttendeeDto> AttendeeDtoCollection = new();
+
+    AttendeeDto CurrentAttendee;
+
+    AttendeeDto NewAttendee;
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllAttendees();
+    }
+
+    private async Task GetAllAttendees()
+    {
+        try
+        {
+            using var http = new HttpClient();
+            var list = await http.GetFromJsonAsync<List<AttendeeDto>>($"{BaseUrl}attendee");
+            if (list != null)
+            {
+                AttendeeDtoCollection.Clear();
+                AttendeeDtoCollection.AddRange(list);
+
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR");
+        }
+    }
+
+    async Task EditAttendee(AttendeeDto attendeeDto)
+    {
+        CurrentAttendee = new AttendeeDto
+            {
+                Id = attendeeDto.Id,
+                FirstName = attendeeDto.FirstName,
+                LastName = attendeeDto.LastName,
+                AddressLine1 = attendeeDto.AddressLine1,
+                AddressLine2 = attendeeDto.AddressLine2,
+                AddressLine3 = attendeeDto.AddressLine3,
+                Postcode = attendeeDto.Postcode,
+                Phone = attendeeDto.Phone,
+                Email = attendeeDto.Email,
+                DateOfBirth = attendeeDto.DateOfBirth
+            };
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteAttendee(int? id)
+    {
+        try
+        {
+            using var http = new HttpClient();
+            var url = $"{BaseUrl}attendee/{id}";
+            await http.DeleteAsync(url);
+
+            await GetAllAttendees();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR");
+        }
+    }
+
+    private async Task UpdateAttendee()
+    {
+        try
+        {
+            using var http = new HttpClient();
+            var url = $"{BaseUrl}attendee/{CurrentAttendee.Id}";
+            await http.PutAsJsonAsync(url, CurrentAttendee);
+
+            await GetAllAttendees();
+            CurrentAttendee = null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR");
+        }
+    }
+
+    private async Task CreateNewAttendee()
+    {
+        try
+        {
+            using var http = new HttpClient();
+            var url = $"{BaseUrl}attendee";
+            await http.PostAsJsonAsync(url, NewAttendee);
+            // NO ID???
+            await GetAllAttendees();
+            NewAttendee = null;
+            CreateNewActivitySelected = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR");
+        }
+    }
+
+    private void ShowCreateAttendeeForm()
+    {
+        CreateNewActivitySelected = true;
+        NewAttendee = new AttendeeDto
+            {
+                Id = null,
+                FirstName = "",
+                LastName = "",
+                AddressLine1 = "",
+                AddressLine2 = null,
+                AddressLine3 = null,
+                Postcode = "",
+                Phone = "",
+                Email = "",
+                DateOfBirth = DateTime.Today
+            };
+    }
+
+}
