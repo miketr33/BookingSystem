@@ -7,7 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Shared\Booking.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EventBookingShared\EventBookingShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Shared\Booking.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Shared\Booking.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Shared\Booking.razor" />
   </ItemGroup>
 
 </Project>

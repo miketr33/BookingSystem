@@ -4,7 +4,7 @@ namespace EventBookingShared.Dtos;
 
 public class AttendeeDto
 {
-    public int? Id { get; set; }
+    public int Id { get; set; }
 
     [Required(ErrorMessage = "First Name is required.")]
     [StringLength(100, ErrorMessage = "First Name can't be longer than 100 characters.")]

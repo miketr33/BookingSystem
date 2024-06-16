@@ -1,103 +1,110 @@
 ﻿@using EventBookingShared.Dtos
-@using System.ComponentModel.DataAnnotations
+@using EventBookingWebApp.Services
+@inject IActivityService activityService
 
 <h3>Activities</h3>
 
 <button @onclick="ShowCreateActivityForm">Create Activity</button>
 @if (ActivityDtoCollection.Count == 0)
 {
-    <p><em>Loading Activities...</em></p>
+    <p>
+        <em>Loading Activities...</em>
+    </p>
 }
 else
 {
     <table class="table">
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Add Line 1</th>
-                <th>Add Line 2</th>
-                <th>Add Line 3</th>
-                <th>Postcode</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Delete</th>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Add Line 1</th>
+            <th>Add Line 2</th>
+            <th>Add Line 3</th>
+            <th>Postcode</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Delete</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var activity in ActivityDtoCollection)
-            {
-                <tr>
-                    <td>@activity.Id</td>
-                    <td>@activity.Name</td>
-                    <td>@activity.Description</td>
-                    <td>@activity.AddressLine1</td>
-                    <td>@activity.AddressLine2</td>
-                    <td>@activity.AddressLine3</td>
-                    <td>@activity.Postcode</td>
-                    <td>@activity.ActivityStart.ToShortDateString()</td>
-                    <td>@activity.ActivityEnd.ToShortDateString()</td>
-                    <td><button @onclick="() => EditActivity(activity)">Edit</button></td>
-                    <td><button @onclick="() => DeleteActivity(activity.Id)">Delete</button></td>
-                </tr>
-            }
+        @foreach (var activity in ActivityDtoCollection)
+        {
+            <tr>
+                <td>@activity.Id</td>
+                <td>@activity.Name</td>
+                <td>@activity.Description</td>
+                <td>@activity.AddressLine1</td>
+                <td>@activity.AddressLine2</td>
+                <td>@activity.AddressLine3</td>
+                <td>@activity.Postcode</td>
+                <td>@activity.ActivityStart.ToShortDateString()</td>
+                <td>@activity.ActivityEnd.ToShortDateString()</td>
+                <td>
+                    <button @onclick="() => EditActivity(activity)">Edit</button>
+                </td>
+                <td>
+                    <button @onclick="() => DeleteActivity(activity.Id)">Delete</button>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 }
 
-@if (CurrentActivity != null)
+@if (UpdateActivitySelected)
 {
     <EditForm Model="@CurrentActivity" OnValidSubmit="UpdateActivity">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
         <div>
             <label for="name">Name:</label>
-            <InputText id="name" @bind-Value="CurrentActivity.Name" />
-            <ValidationMessage For="@(() => CurrentActivity.Name)" />
+            <InputText id="name" @bind-Value="CurrentActivity.Name"/>
+            <ValidationMessage For="@(() => CurrentActivity.Name)"/>
         </div>
 
         <div>
             <label for="description">Description:</label>
-            <InputTextArea id="description" @bind-Value="CurrentActivity.Description" />
-            <ValidationMessage For="@(() => CurrentActivity.Description)" />
+            <InputTextArea id="description" @bind-Value="CurrentActivity.Description"/>
+            <ValidationMessage For="@(() => CurrentActivity.Description)"/>
         </div>
 
         <div>
             <label for="addressLine1">Address Line 1:</label>
-            <InputText id="addressLine1" @bind-Value="CurrentActivity.AddressLine1" />
-            <ValidationMessage For="@(() => CurrentActivity.AddressLine1)" />
+            <InputText id="addressLine1" @bind-Value="CurrentActivity.AddressLine1"/>
+            <ValidationMessage For="@(() => CurrentActivity.AddressLine1)"/>
         </div>
 
         <div>
             <label for="addressLine2">Address Line 2:</label>
-            <InputText id="addressLine2" @bind-Value="CurrentActivity.AddressLine2" />
-            <ValidationMessage For="@(() => CurrentActivity.AddressLine2)" />
+            <InputText id="addressLine2" @bind-Value="CurrentActivity.AddressLine2"/>
+            <ValidationMessage For="@(() => CurrentActivity.AddressLine2)"/>
         </div>
 
         <div>
             <label for="addressLine3">Address Line 3:</label>
-            <InputText id="addressLine3" @bind-Value="CurrentActivity.AddressLine3" />
-            <ValidationMessage For="@(() => CurrentActivity.AddressLine3)" />
+            <InputText id="addressLine3" @bind-Value="CurrentActivity.AddressLine3"/>
+            <ValidationMessage For="@(() => CurrentActivity.AddressLine3)"/>
         </div>
 
         <div>
             <label for="postcode">Postcode:</label>
-            <InputText id="postcode" @bind-Value="CurrentActivity.Postcode" />
-            <ValidationMessage For="@(() => CurrentActivity.Postcode)" />
+            <InputText id="postcode" @bind-Value="CurrentActivity.Postcode"/>
+            <ValidationMessage For="@(() => CurrentActivity.Postcode)"/>
         </div>
 
         <div>
             <label for="activityStart">Activity Start:</label>
-            <InputDate id="activityStart" @bind-Value="CurrentActivity.ActivityStart" />
-            <ValidationMessage For="@(() => CurrentActivity.ActivityStart)" />
+            <InputDate id="activityStart" @bind-Value="CurrentActivity.ActivityStart"/>
+            <ValidationMessage For="@(() => CurrentActivity.ActivityStart)"/>
         </div>
 
         <div>
             <label for="activityEnd">Activity End:</label>
-            <InputDate id="activityEnd" @bind-Value="CurrentActivity.ActivityEnd" />
-            <ValidationMessage For="@(() => CurrentActivity.ActivityEnd)" />
+            <InputDate id="activityEnd" @bind-Value="CurrentActivity.ActivityEnd"/>
+            <ValidationMessage For="@(() => CurrentActivity.ActivityEnd)"/>
         </div>
 
         <button type="submit">Save</button>
@@ -107,55 +114,55 @@ else
 @if (CreateNewActivitySelected)
 {
     <EditForm Model="@NewActivity" OnValidSubmit="CreateNewActivity">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
         <div>
             <label for="name">Name:</label>
-            <InputText id="name" @bind-Value="NewActivity.Name" />
-            <ValidationMessage For="@(() => NewActivity.Name)" />
+            <InputText id="name" @bind-Value="NewActivity.Name"/>
+            <ValidationMessage For="@(() => NewActivity.Name)"/>
         </div>
 
         <div>
             <label for="description">Description:</label>
-            <InputTextArea id="description" @bind-Value="NewActivity.Description" />
-            <ValidationMessage For="@(() => NewActivity.Description)" />
+            <InputTextArea id="description" @bind-Value="NewActivity.Description"/>
+            <ValidationMessage For="@(() => NewActivity.Description)"/>
         </div>
 
         <div>
             <label for="addressLine1">Address Line 1:</label>
-            <InputText id="addressLine1" @bind-Value="NewActivity.AddressLine1" />
-            <ValidationMessage For="@(() => NewActivity.AddressLine1)" />
+            <InputText id="addressLine1" @bind-Value="NewActivity.AddressLine1"/>
+            <ValidationMessage For="@(() => NewActivity.AddressLine1)"/>
         </div>
 
         <div>
             <label for="addressLine2">Address Line 2:</label>
-            <InputText id="addressLine2" @bind-Value="NewActivity.AddressLine2" />
-            <ValidationMessage For="@(() => NewActivity.AddressLine2)" />
+            <InputText id="addressLine2" @bind-Value="NewActivity.AddressLine2"/>
+            <ValidationMessage For="@(() => NewActivity.AddressLine2)"/>
         </div>
 
         <div>
             <label for="addressLine3">Address Line 3:</label>
-            <InputText id="addressLine3" @bind-Value="NewActivity.AddressLine3" />
-            <ValidationMessage For="@(() => NewActivity.AddressLine3)" />
+            <InputText id="addressLine3" @bind-Value="NewActivity.AddressLine3"/>
+            <ValidationMessage For="@(() => NewActivity.AddressLine3)"/>
         </div>
 
         <div>
             <label for="postcode">Postcode:</label>
-            <InputText id="postcode" @bind-Value="NewActivity.Postcode" />
-            <ValidationMessage For="@(() => NewActivity.Postcode)" />
+            <InputText id="postcode" @bind-Value="NewActivity.Postcode"/>
+            <ValidationMessage For="@(() => NewActivity.Postcode)"/>
         </div>
 
         <div>
             <label for="activityStart">Activity Start:</label>
-            <InputDate id="activityStart" @bind-Value="NewActivity.ActivityStart" />
-            <ValidationMessage For="@(() => NewActivity.ActivityStart)" />
+            <InputDate id="activityStart" @bind-Value="NewActivity.ActivityStart"/>
+            <ValidationMessage For="@(() => NewActivity.ActivityStart)"/>
         </div>
 
         <div>
             <label for="activityEnd">Activity End:</label>
-            <InputDate id="activityEnd" @bind-Value="NewActivity.ActivityEnd" />
-            <ValidationMessage For="@(() => NewActivity.ActivityEnd)" />
+            <InputDate id="activityEnd" @bind-Value="NewActivity.ActivityEnd"/>
+            <ValidationMessage For="@(() => NewActivity.ActivityEnd)"/>
         </div>
 
         <button type="submit">Save</button>
@@ -165,103 +172,61 @@ else
 @code {
     private const string BaseUrl = "https://localhost:7200/";
     private bool CreateNewActivitySelected = false;
+    private bool UpdateActivitySelected = false;
     List<ActivityDto> ActivityDtoCollection = new();
 
     ActivityDto CurrentActivity;
 
     ActivityDto NewActivity;
+
     protected override async Task OnInitializedAsync()
     {
-        await GetAllActivities();
-    }
-
-    private async Task GetAllActivities()
-    {
-        try
-        {
-            using var http = new HttpClient();
-            var list = await http.GetFromJsonAsync<List<ActivityDto>>($"{BaseUrl}activity");
-            if (list != null)
-            {
-                ActivityDtoCollection.Clear();
-                ActivityDtoCollection.AddRange(list);
-
-                StateHasChanged();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
-    }
-
-    async Task EditActivity(ActivityDto activityDto)
-    {
-        CurrentActivity = new ActivityDto
-            {
-                Id = activityDto.Id,
-                Name = activityDto.Name,
-                Description = activityDto.Description,
-                AddressLine1 = activityDto.AddressLine1,
-                AddressLine2 = activityDto.AddressLine2,
-                AddressLine3 = activityDto.AddressLine3,
-                Postcode = activityDto.Postcode,
-                ActivityStart = activityDto.ActivityStart,
-                ActivityEnd = activityDto.ActivityEnd
-            };
-
-        await InvokeAsync(StateHasChanged);
+        await LoadActivities();
     }
 
     private async Task DeleteActivity(int? id)
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}activity/{id}";
-            await http.DeleteAsync(url);
+        await activityService.DeleteActivityAsync(id);
 
-            await GetAllActivities();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        await LoadActivities();
+    }
+
+    private async Task LoadActivities()
+    {
+        ActivityDtoCollection = await activityService.GetAllActivitiesAsync();
     }
 
     private async Task UpdateActivity()
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}activity/{CurrentActivity.Id}";
-            await http.PutAsJsonAsync(url, CurrentActivity);
-
-            await GetAllActivities();
-            CurrentActivity = null;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        await activityService.UpdateActivityAsync(CurrentActivity);
+        UpdateActivitySelected = false;
+        await LoadActivities();
     }
 
     private async Task CreateNewActivity()
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}activity";
-            await http.PostAsJsonAsync(url, NewActivity);
+        await activityService.CreateNewActivityAsync(NewActivity);
+        await LoadActivities();
+        CreateNewActivitySelected = false;
+    }
 
-            await GetAllActivities();
-            NewActivity = null;
-            CreateNewActivitySelected = false;
-        }
-        catch (Exception ex)
+    private async Task EditActivity(ActivityDto activityDto)
+    {
+        UpdateActivitySelected = true;
+        CurrentActivity = new ActivityDto
         {
-            Console.WriteLine("ERROR");
-        }
+            Id = activityDto.Id,
+            Name = activityDto.Name,
+            Description = activityDto.Description,
+            AddressLine1 = activityDto.AddressLine1,
+            AddressLine2 = activityDto.AddressLine2,
+            AddressLine3 = activityDto.AddressLine3,
+            Postcode = activityDto.Postcode,
+            ActivityStart = activityDto.ActivityStart,
+            ActivityEnd = activityDto.ActivityEnd
+        };
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private void ShowCreateActivityForm()
@@ -270,14 +235,14 @@ else
         NewActivity = new ActivityDto
         {
             Id = null,
-            Name = "Enter a name",
-                Description = "Enter description",
-            AddressLine1 = "e.g. 10 High Street",
-                AddressLine2 = "Town",
-            AddressLine3 = "County",
-            Postcode = "XXXXXXX",
-            ActivityStart = DateTime.Now,
-                ActivityEnd = DateTime.Now
+            Name = "",
+            Description = "",
+            AddressLine1 = "",
+            AddressLine2 = "",
+            AddressLine3 = "",
+            Postcode = "",
+            ActivityStart = DateTime.Now.AddDays(1),
+            ActivityEnd = DateTime.Now.AddDays(1)
         };
     }
 

@@ -1,5 +1,8 @@
 ﻿@using EventBookingShared.Dtos
 @using System.ComponentModel.DataAnnotations
+@using EventBookingWebApp.Services
+@inject IAttendeeService attendeeService
+
 
 <h3>Attendees</h3>
 
@@ -49,7 +52,7 @@ else
     </table>
 }
 
-@if (CurrentAttendee != null)
+@if (UpdateActivitySelected)
 {
     <EditForm Model="@CurrentAttendee" OnValidSubmit="UpdateAttendee">
         <DataAnnotationsValidator />
@@ -180,6 +183,7 @@ else
 @code {
     private const string BaseUrl = "https://localhost:7200/";
     private bool CreateNewActivitySelected = false;
+    private bool UpdateActivitySelected = false;
     List<AttendeeDto> AttendeeDtoCollection = new();
 
     AttendeeDto CurrentAttendee;
@@ -187,31 +191,17 @@ else
     AttendeeDto NewAttendee;
     protected override async Task OnInitializedAsync()
     {
-        await GetAllAttendees();
+        await LoadActivities();
     }
 
-    private async Task GetAllAttendees()
+    private async Task LoadActivities()
     {
-        try
-        {
-            using var http = new HttpClient();
-            var list = await http.GetFromJsonAsync<List<AttendeeDto>>($"{BaseUrl}attendee");
-            if (list != null)
-            {
-                AttendeeDtoCollection.Clear();
-                AttendeeDtoCollection.AddRange(list);
-
-                StateHasChanged();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        AttendeeDtoCollection = await attendeeService.GetAllAttendeesAsync();
     }
-
+    
     async Task EditAttendee(AttendeeDto attendeeDto)
     {
+        UpdateActivitySelected = true;
         CurrentAttendee = new AttendeeDto
             {
                 Id = attendeeDto.Id,
@@ -229,55 +219,24 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task DeleteAttendee(int? id)
+    private async Task DeleteAttendee(int id)
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}attendee/{id}";
-            await http.DeleteAsync(url);
-
-            await GetAllAttendees();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        await attendeeService.DeleteAttendeeAsync(id);
+        await LoadActivities();
     }
 
     private async Task UpdateAttendee()
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}attendee/{CurrentAttendee.Id}";
-            await http.PutAsJsonAsync(url, CurrentAttendee);
-
-            await GetAllAttendees();
-            CurrentAttendee = null;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        await attendeeService.UpdateAttendeeAsync(CurrentAttendee);
+        UpdateActivitySelected = false;
+        await LoadActivities();
     }
 
     private async Task CreateNewAttendee()
     {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"{BaseUrl}attendee";
-            await http.PostAsJsonAsync(url, NewAttendee);
-            // NO ID???
-            await GetAllAttendees();
-            NewAttendee = null;
-            CreateNewActivitySelected = false;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR");
-        }
+        await attendeeService.CreateAttendeeAsync(NewAttendee);
+        CreateNewActivitySelected = false;
+        await LoadActivities();
     }
 
     private void ShowCreateAttendeeForm()
@@ -285,7 +244,7 @@ else
         CreateNewActivitySelected = true;
         NewAttendee = new AttendeeDto
             {
-                Id = null,
+                Id = 0,
                 FirstName = "",
                 LastName = "",
                 AddressLine1 = "",

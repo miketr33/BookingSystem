@@ -1,10 +1,22 @@
 using EventBookingWebApp.Components;
+using EventBookingWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddHttpClient<ActivityService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7200/");
+});
+builder.Services.AddScoped<IAttendeeService, AttendeeService>();
+builder.Services.AddHttpClient<AttendeeService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7200/");
+});
 
 var app = builder.Build();
 
