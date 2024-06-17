@@ -37,5 +37,23 @@ public class AttendeeDto
     public string Email { get; set; }
 
     [Required(ErrorMessage = "Date of Birth is required.")]
+    [PastDate(ErrorMessage = "Date of Birth must be in the past.")]
     public DateTime DateOfBirth { get; set; }
+}
+
+public class PastDateAttribute : ValidationAttribute
+{
+    public PastDateAttribute()
+    {
+        ErrorMessage = "The date must be in the past.";
+    }
+
+    public override bool IsValid(object value)
+    {
+        if (value is DateTime dateTime)
+        {
+            return dateTime < DateTime.Now.Date;
+        }
+        return false;
+    }
 }
