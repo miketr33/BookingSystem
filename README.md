@@ -14,6 +14,7 @@ To create the relevant database and tables in your local environment, follow the
 2. Open the Package Manager Console.
 3. Enter: `UPDATE-DATABASE`
 4. Once the console says `Done.`, check that your database exists in SQL Server Management Studio or similar.
+5. Get the connection string for you new databse and add it to `appsettings.json` within the `EventBookingApi` project. Make sure that TrustServerCerticate=True and ConnectionTimeout=30 (this may change in the future). Example: `data source=<MACHINE-NAME>;initial catalog=<DATABASE-NAME>;trusted_connection=true;TrustServerCertificate=True;Connection Timeout=30;`
 
 If you make any changes to the `EventBookingShared/Models` folder or wish to add other SQL functionality such as Stored Procedures, you will need to create a new migration. This can be done by using the `ADD-MIGRATION` command. More info on EF Core Code-First databases can be found [here](https://medium.com/@vndpal/how-to-connect-net-web-api-with-sql-server-using-entity-framework-code-first-approach-8564192485c9).
 
