@@ -18,6 +18,7 @@ To create the relevant database and tables in your local environment, follow the
 
 If you make any changes to the `EventBookingShared/Models` folder or wish to add other SQL functionality such as Stored Procedures, you will need to create a new migration. This can be done by using the `ADD-MIGRATION` command. More info on EF Core Code-First databases can be found [here](https://medium.com/@vndpal/how-to-connect-net-web-api-with-sql-server-using-entity-framework-code-first-approach-8564192485c9).
 
+_Please Note: The database is not seeded with test data, so on first load get requests will not return any results. Please make create new entries before running get/put requests._
 
 ### Startup Projects
 
@@ -55,8 +56,10 @@ Below are some improvements that can be made to the current solution. This list 
 
 - **Booking Component Checks**:
     
-    - **Issue**: In the Booking component, there are no checks to ensure the activity and attendee exist, causing an unhandled exception.
-    - **Resolution**: In the Blazor web app project, set up a call to utilize the `getAttendeeById` (/Attendee/{attendeeId}) and `getActivityById` (/Activity/{activityId}) endpoints available in the Web API. Use these calls to check if both values exist before making the booking, and display relevant errors if they are not found.
+    - **Issue 1**: In the Booking component, there are is a check to ensure the activity and attendee exist, however this fails silently. Meaning if either do not exist the booking dialog just closes.
+    	- **Proposed Resolution**: Add some logic to indicate to the user that a booking cannot be made as the activity/attendee does not exist.
+    - **Issue 2**: It is currently possible to delete an activity or attendee that is attached to an existing booking.
+    	- **Proposed Resolution**: Add logic to either prevent deletion, or cascade deletion so that if an activity/attendee is deleted, then any corresponding bookings will also be deleted. Either way the user should be informed. 
 - **Logging**:
     
     - Currently, there is no logging implemented throughout the solution. Logging could be useful for audit and debugging processes. However, care must be taken around Personal Identifiable Information (PII), and GDPR rules must be followed.
