@@ -7,9 +7,9 @@
 <h3>Attendees</h3>
 
 <button @onclick="ShowCreateAttendeeForm">Create Attendee</button>
-@if (AttendeeDtoCollection.Count == 0)
+@if (_attendeeDtoCollection == null || _attendeeDtoCollection?.Count == 0)
 {
-    <p><em>Loading Attendees...</em></p>
+    <p><em>No attendees to display...</em></p>
 }
 else
 {
@@ -31,28 +31,35 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var attendee in AttendeeDtoCollection)
-            {
-                <tr>
-                    <td>@attendee.Id</td>
-                    <td>@attendee.FirstName</td>
-                    <td>@attendee.LastName</td>
-                    <td>@attendee.AddressLine1</td>
-                    <td>@attendee.AddressLine2</td>
-                    <td>@attendee.AddressLine3</td>
-                    <td>@attendee.Postcode</td>
-                    <td>@attendee.Phone</td>
-                    <td>@attendee.Email</td>
-                    <td>@attendee.DateOfBirth.ToShortDateString()</td>
-                    <td><button @onclick="() => EditAttendee(attendee)">Edit</button></td>
-                    <td><button @onclick="() => DeleteAttendee(attendee.Id)">Delete</button></td>
-                </tr>
-            }
-        </tbody>
+        @if (_attendeeDtoCollection != null)
+    {
+        foreach (var attendee in _attendeeDtoCollection)
+        {
+            <tr>
+                <td>@attendee.Id</td>
+                <td>@attendee.FirstName</td>
+                <td>@attendee.LastName</td>
+                <td>@attendee.AddressLine1</td>
+                <td>@attendee.AddressLine2</td>
+                <td>@attendee.AddressLine3</td>
+                <td>@attendee.Postcode</td>
+                <td>@attendee.Phone</td>
+                <td>@attendee.Email</td>
+                <td>@attendee.DateOfBirth.ToShortDateString()</td>
+                <td>
+                    <button @onclick="() => EditAttendee(attendee)">Edit</button>
+                </td>
+                <td>
+                    <button @onclick="() => DeleteAttendee(attendee.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    }
+    </tbody>
     </table>
 }
 
-@if (UpdateActivitySelected)
+@if (_updateActivitySelected)
 {
     <EditForm Model="@CurrentAttendee" OnValidSubmit="UpdateAttendee">
         <DataAnnotationsValidator />
@@ -117,7 +124,7 @@ else
     </EditForm>
 }
 
-@if (CreateNewActivitySelected)
+@if (_createNewActivitySelected)
 {
     <EditForm Model="@NewAttendee" OnValidSubmit="CreateNewAttendee">
         <DataAnnotationsValidator />
@@ -183,13 +190,12 @@ else
 }
 
 @code {
-    private bool CreateNewActivitySelected = false;
-    private bool UpdateActivitySelected = false;
-    List<AttendeeDto> AttendeeDtoCollection = new();
-
+    private bool _createNewActivitySelected = false;
+    private bool _updateActivitySelected = false;
+    List<AttendeeDto>? _attendeeDtoCollection = [];
     AttendeeDto CurrentAttendee;
-
     AttendeeDto NewAttendee;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadActivities();
@@ -197,22 +203,22 @@ else
 
     private void CancelUpdate()
     {
-        UpdateActivitySelected = false;
+        _updateActivitySelected = false;
     }
 
     private void CancelCreate()
     {
-        CreateNewActivitySelected = false;
+        _createNewActivitySelected = false;
     }
 
     private async Task LoadActivities()
     {
-        AttendeeDtoCollection = await attendeeService.GetAllAttendeesAsync();
+        _attendeeDtoCollection = await attendeeService.GetAllAttendeesAsync();
     }
     
     async Task EditAttendee(AttendeeDto attendeeDto)
     {
-        UpdateActivitySelected = true;
+        _updateActivitySelected = true;
         CurrentAttendee = new AttendeeDto
             {
                 Id = attendeeDto.Id,
@@ -239,20 +245,20 @@ else
     private async Task UpdateAttendee()
     {
         await attendeeService.UpdateAttendeeAsync(CurrentAttendee);
-        UpdateActivitySelected = false;
+        _updateActivitySelected = false;
         await LoadActivities();
     }
 
     private async Task CreateNewAttendee()
     {
         await attendeeService.CreateAttendeeAsync(NewAttendee);
-        CreateNewActivitySelected = false;
+        _createNewActivitySelected = false;
         await LoadActivities();
     }
 
     private void ShowCreateAttendeeForm()
     {
-        CreateNewActivitySelected = true;
+        _createNewActivitySelected = true;
         NewAttendee = new AttendeeDto
             {
                 Id = 0,

@@ -4,13 +4,13 @@ namespace EventBookingWebApp.Services;
 
 public class ActivityService(HttpClient httpClient) : IActivityService
 {
-    private const string BaseUrl = "https://localhost:7200/";
+    private const string BaseUrl = "https://localhost:7200/activity";
 
-    public async Task<List<ActivityDto>> GetAllActivitiesAsync()
+    public async Task<List<ActivityDto>?> GetAllActivitiesAsync()
     {
         try
         {
-            return await httpClient.GetFromJsonAsync<List<ActivityDto>>($"{BaseUrl}activity");
+            return await httpClient.GetFromJsonAsync<List<ActivityDto>>($"{BaseUrl}");
         }
         catch (Exception ex)
         {
@@ -19,11 +19,16 @@ public class ActivityService(HttpClient httpClient) : IActivityService
         }
     }
 
+    public async Task<ActivityDto?> GetActivityByIdAsync(int id)
+    {
+        return await httpClient.GetFromJsonAsync<ActivityDto>($"{BaseUrl}/{id}");
+    }
+
     public async Task DeleteActivityAsync(int? id)
     {
         try
         {
-            await httpClient.DeleteAsync($"{BaseUrl}activity/{id}");
+            await httpClient.DeleteAsync($"{BaseUrl}/{id}");
         }
         catch (Exception ex)
         {
@@ -35,7 +40,7 @@ public class ActivityService(HttpClient httpClient) : IActivityService
     {
         try
         {
-            var url = $"{BaseUrl}activity/{activityDto.Id}";
+            var url = $"{BaseUrl}/{activityDto.Id}";
             await httpClient.PutAsJsonAsync(url, activityDto);
         }
         catch (Exception ex)
@@ -48,7 +53,7 @@ public class ActivityService(HttpClient httpClient) : IActivityService
     {
         try
         {
-            var url = $"{BaseUrl}activity";
+            var url = $"{BaseUrl}";
             await httpClient.PostAsJsonAsync(url, newActivity);
         }
         catch (Exception ex)

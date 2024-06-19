@@ -34,9 +34,7 @@ public class ActivityController(
     [HttpGet]
     public async Task<IActionResult> GetActivities()
     {
-        var activities = await activityService.GetActivities();
-        if (activities.Count == 0) return NotFound();
-
+        var activities = await activityService.GetAllActivities();
         var activitiesDto = mapper.Map<List<ActivityDto>>(activities);
         return Ok(activitiesDto);
     }

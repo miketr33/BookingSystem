@@ -13,7 +13,7 @@ public class ActivityRepository(EventBookingDbContext context) : IActivityReposi
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<ActivityDetails?>> GetActivities()
+    public async Task<List<ActivityDetails>> GetActivities()
     {
         return await context.ActivityDetails.ToListAsync();
     }

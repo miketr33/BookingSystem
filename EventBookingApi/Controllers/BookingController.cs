@@ -45,8 +45,6 @@ public class BookingController(
     public async Task<IActionResult> GetAllBookings()
     {
         var bookings = await bookingService.GetAllBookings();
-        if (bookings.Count == 0) return NotFound();
-
         var bookingDtos = mapper.Map<List<BookingDto>>(bookings);
         return Ok(bookingDtos);
     }

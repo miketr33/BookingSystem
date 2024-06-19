@@ -1,4 +1,5 @@
-﻿using EventBookingApi.Models;
+﻿using Azure;
+using EventBookingApi.Models;
 using EventBookingApi.Repositories;
 
 namespace EventBookingApi.Services;
@@ -12,7 +13,8 @@ public class AttendeeService(IAttendeeRepository attendeeRepository) : IAttendee
 
     public async Task<List<Attendee>> GetAttendees()
     {
-        return await attendeeRepository.GetAttendees();
+        var response =  await attendeeRepository.GetAttendees();
+        return response ?? [];
     }
 
     public async Task<Attendee?> GetAttendeeById(int id)

@@ -25,9 +25,10 @@ public class BookingService(IBookingRepository bookingRepository) : IBookingServ
         return await bookingRepository.GetBookingByAttendeeIdAndActivityId(attendeeId, activityId);
     }
 
-    public async Task<List<Booking?>> GetAllBookings()
+    public async Task<List<Booking>> GetAllBookings()
     {
-        return await bookingRepository.GetAllBookings();
+        var response = await bookingRepository.GetAllBookings();
+        return response ?? [];
     }
 
     public async Task<Booking?> GetBookingByBookingId(int id)

@@ -36,8 +36,6 @@ public class AttendeeController(
     public async Task<IActionResult> GetAllAttendees()
     {
         var attendees = await attendeeService.GetAttendees();
-        if (attendees.Count == 0) return NotFound();
-
         var attendeeDto = mapper.Map<List<AttendeeDto>>(attendees);
         return Ok(attendeeDto);
     }

@@ -10,9 +10,10 @@ public class ActivityService(IActivityRepository activityRepository) : IActivity
         await activityRepository.CreateActivity(activityDetails);
     }
 
-    public async Task<List<ActivityDetails?>> GetActivities()
+    public async Task<List<ActivityDetails>> GetAllActivities()
     {
-        return await activityRepository.GetActivities();
+        var response = await activityRepository.GetActivities();
+        return response ?? [];
     }
 
     public async Task<ActivityDetails?> GetActivityById(int id)

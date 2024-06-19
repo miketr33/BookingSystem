@@ -7,12 +7,12 @@ namespace EventBookingWebApp.Services
     {
         private const string BaseUrl = "https://localhost:7200/attendee/";
 
-        public async Task<List<AttendeeDto>> GetAllAttendeesAsync()
+        public async Task<List<AttendeeDto>?> GetAllAttendeesAsync()
         {
             return await httpClient.GetFromJsonAsync<List<AttendeeDto>>(BaseUrl);
         }
 
-        public async Task<AttendeeDto> GetAttendeeByIdAsync(int id)
+        public async Task<AttendeeDto?> GetAttendeeByIdAsync(int id)
         {
             return await httpClient.GetFromJsonAsync<AttendeeDto>($"{BaseUrl}{id}");
         }

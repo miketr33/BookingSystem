@@ -31,7 +31,7 @@ public class BookingRepository(EventBookingDbContext context) : IBookingReposito
             .FirstOrDefaultAsync(b => b != null && b.AttendeeId == attendeeId && b.ActivityId == activityId);
     }
 
-    public async Task<List<Booking?>> GetAllBookings()
+    public async Task<List<Booking>> GetAllBookings()
     {
         return await context.Booking.ToListAsync();
     }
